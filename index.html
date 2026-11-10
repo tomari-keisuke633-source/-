@@ -11,209 +11,279 @@
   const SUPABASE_KEY = 'sb_publishable_osDUneafEHlledFOwNAwNA_dRTZbsiV';
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#17573f">
+<meta name="theme-color" content="#1c1916">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="ゼニー">
-<title>ゼニー</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="統一">
+<title>統一</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Yuji+Boku&text=%E7%B5%B1%E4%B8%80%E9%8A%80%E8%A1%8C&display=block" rel="stylesheet">
 <style>
 :root {
-  --felt: #17573f;
-  --felt-deep: #0f3d2c;
-  --paper: #eef2ef;
-  --surface: #ffffff;
-  --ink: #18231f;
-  --muted: #5d6b65;
-  --line: #d3ddd8;
-  --gold: #d4a62a;
-  --gold-ink: #3a2a00;
-  --gain: #1f7a47;
-  --loss: #b8322e;
-  --focus: #2a6fdb;
+  --sumi: #1c1916;      /* 墨：地・ヘッダー */
+  --washi: #f3eee3;     /* 和紙：本文の地 */
+  --paper: #fbf8f2;     /* 札・カード */
+  --ink: #26211c;       /* 文字 */
+  --muted: #5f564c;     /* 補足文字 */
+  --muted-dark: #b8ad9c;/* 墨地の上の補足文字 */
+  --line: #ddd3c2;
+  --line-strong: #c9bfae;
+  --shu: #b7372a;       /* 朱：判子・主ボタン */
+  --shu-ink: #9e2a1f;   /* 朱の文字（減額） */
+  --ai: #24456b;        /* 藍：増額 */
+  --wood: #d9b98a;      /* 木札 */
+  --coin: #a07a3c;
+  --coin-edge: #d2ad62;
+  --mincho: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --gothic: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+  --brush: "Yuji Boku", "Shippori Mincho", serif;
   color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --felt: #1d6b4e;
-    --felt-deep: #0d2e22;
-    --paper: #121a17;
-    --surface: #1b2521;
-    --ink: #e7efeb;
-    --muted: #9aaba3;
-    --line: #2e3c36;
-    --gold: #e1b843;
-    --gain: #4cc583;
-    --loss: #ff7a72;
-    --focus: #7fb0ff;
-    color-scheme: dark;
-  }
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html, body { margin: 0; height: 100%; }
+html, body { margin: 0; min-height: 100%; }
 body {
-  font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Yu Gothic", system-ui, sans-serif;
-  font-weight: 500;
-  background: var(--paper);
-  color: var(--ink);
-  font-size: 16px;
-  line-height: 1.6;
-  font-variant-numeric: tabular-nums;
+  font-family: var(--gothic); background: var(--washi); color: var(--ink);
+  font-size: 15px; line-height: 1.6; font-variant-numeric: tabular-nums;
+  -webkit-tap-highlight-color: transparent;
 }
 button, input, select { font: inherit; color: inherit; }
-:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+:focus-visible { outline: 3px solid var(--ai); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.mincho { font-family: var(--mincho); }
 
-/* ---------- login ---------- */
+/* ---------- 入口 ---------- */
 .login {
-  min-height: 100%;
-  display: grid; place-content: center; gap: 28px; padding: 24px;
-  background: radial-gradient(circle at 50% 30%, var(--felt), var(--felt-deep));
+  min-height: 100vh; min-height: 100dvh; background: var(--sumi); color: var(--washi);
+  display: flex; flex-direction: column; padding: calc(48px + env(safe-area-inset-top)) 28px calc(32px + env(safe-area-inset-bottom));
+  position: relative; overflow: hidden;
 }
-.login-chip, .chip {
-  border-radius: 50%;
-  background:
-    radial-gradient(circle, var(--gold) 0 55%, transparent 56%),
-    repeating-conic-gradient(var(--gold) 0 15deg, #fff 15deg 30deg);
-  color: var(--gold-ink);
-  display: grid; place-content: center; text-align: center;
-  font-weight: 900;
-  box-shadow: inset 0 0 0 4px var(--gold), 0 3px 0 rgba(0,0,0,.35);
+.login::before {
+  content: ""; position: absolute; top: -120px; right: -150px; width: 420px; height: 420px;
+  border-radius: 50%; border: 1px solid rgba(243, 238, 227, .08); pointer-events: none;
 }
-.login-chip { width: 150px; height: 150px; margin: 0 auto; font-size: 1.6rem; }
+.login-hero { flex: 1; display: flex; flex-direction: row-reverse; justify-content: center; align-items: flex-start; gap: 18px; min-height: 300px; }
+.brush-title {
+  margin: 0; writing-mode: vertical-rl; font-family: var(--brush); font-weight: 400;
+  font-size: clamp(130px, 44vw, 190px); line-height: 1; letter-spacing: -.04em;
+}
+.login-side { display: flex; flex-direction: column; justify-content: flex-end; align-self: stretch; max-height: 360px; gap: 14px; }
+.seal {
+  width: 46px; height: 46px; background: var(--shu); color: #fff7ee; border-radius: 3px;
+  display: flex; align-items: center; justify-content: center; transform: rotate(-4deg);
+}
+.seal span { writing-mode: vertical-rl; font-family: var(--mincho); font-weight: 800; font-size: 17px; line-height: 1; }
+.kana { margin: 0; writing-mode: vertical-rl; font-family: var(--mincho); font-size: 13px; letter-spacing: .3em; color: var(--muted-dark); }
 .login-form {
-  background: var(--surface); border-radius: 14px; padding: 20px;
-  width: min(340px, 90vw); display: grid; gap: 12px;
+  background: var(--washi); color: var(--ink); border-radius: 4px; padding: 22px 20px 20px;
+  display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 420px; margin: 0 auto;
 }
-.login-form label { display: grid; gap: 4px; font-size: .9rem; color: var(--muted); }
-.hint { margin: 0; font-size: .8rem; color: var(--muted); }
+.login-note { margin: 16px 0 0; text-align: center; font-size: 12px; color: #a99e8d; }
 
-/* ---------- layout ---------- */
-#app { min-height: 100%; padding-bottom: calc(70px + env(safe-area-inset-bottom)); }
-.top {
-  position: sticky; top: 0; z-index: 5;
-  background: var(--felt); color: #fff;
-  padding: calc(10px + env(safe-area-inset-top)) 16px 10px;
-  display: flex; justify-content: space-between; align-items: center;
+/* ---------- 共通部品 ---------- */
+.field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
+.input, .field input, .field select {
+  height: 46px; border: 1px solid var(--line-strong); border-radius: 3px; background: #fff;
+  padding: 0 12px; font-size: 16px; color: var(--ink); width: 100%;
 }
-.who { font-size: 1.15rem; font-weight: 700; }
-.grp { font-size: .8rem; opacity: .8; }
-.chip { width: 76px; height: 76px; line-height: 1.1; }
-.chip span { font-size: 1.15rem; }
-.chip small { font-size: .62rem; }
-.chip.neg { filter: grayscale(.4); }
-.chip.neg span { color: var(--loss); }
-
-main { max-width: 640px; margin: 0 auto; padding: 16px; display: grid; gap: 18px; }
-h2 { font-size: 1.05rem; margin: 0 0 8px; font-weight: 900; }
-h3 { font-size: .95rem; margin: 14px 0 6px; }
-.block { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
-.block.alert { border: 2px solid var(--gold); }
-.sub { color: var(--muted); font-size: .85rem; margin: 0 0 8px; }
-.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.login-form .field input { background: var(--paper); }
+input[type=number], .num { text-align: right; font-family: var(--mincho); font-weight: 700; }
+input:disabled { background: #ece6da; border-color: var(--line); }
+.btn {
+  min-height: 46px; padding: 0 18px; border-radius: 3px; cursor: pointer;
+  font-family: var(--mincho); font-weight: 700; font-size: 15px; letter-spacing: .08em;
+  border: 1.5px solid var(--ink); background: transparent; color: var(--ink);
+}
+.btn.shu { background: var(--shu); border-color: var(--shu); color: #fff7ee; }
+.btn.sumi { background: var(--sumi); border-color: var(--sumi); color: var(--washi); }
+.btn.wide { width: 100%; min-height: 50px; font-size: 17px; letter-spacing: .15em; }
+.btn.small { min-height: 38px; padding: 0 12px; font-size: 14px; }
+.btn.quiet { border-color: var(--line-strong); color: var(--muted); }
+.btn.danger { border-color: var(--shu-ink); color: var(--shu-ink); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.row { display: flex; gap: 8px; align-items: center; }
 .grow { flex: 1; min-width: 0; }
-.empty { color: var(--muted); font-size: .9rem; margin: 0; }
+
+/* ---------- 枠 ---------- */
+#app { min-height: 100vh; padding-bottom: calc(66px + env(safe-area-inset-bottom)); }
+.top {
+  position: sticky; top: 0; z-index: 5; background: var(--sumi); color: var(--washi);
+  padding: calc(14px + env(safe-area-inset-top)) 20px 16px;
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+}
+.who { font-family: var(--mincho); font-weight: 700; font-size: 20px; line-height: 1.3; }
+.where { font-size: 12px; color: var(--muted-dark); }
+.purse { display: flex; align-items: center; gap: 10px; }
+.purse-num { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.1; }
+.purse-num b { font-family: var(--mincho); font-weight: 800; font-size: 26px; }
+.purse-num small { font-size: 11px; color: var(--muted-dark); }
+.purse.neg b { color: #ff9a8c; }
+
+main { max-width: 560px; margin: 0 auto; padding: 18px 16px 24px; display: flex; flex-direction: column; gap: 22px; }
 
 .tabs {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 5;
-  display: grid; grid-template-columns: repeat(5, 1fr);
-  background: var(--surface); border-top: 1px solid var(--line);
-  padding-bottom: env(safe-area-inset-bottom);
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: var(--sumi);
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+  padding: 0 4px env(safe-area-inset-bottom);
 }
 .tabs button {
-  background: none; border: 0; padding: 12px 2px; font-size: .85rem; color: var(--muted);
-  position: relative; cursor: pointer;
+  height: 60px; border: 0; background: transparent; color: #a99e8d; cursor: pointer;
+  font-family: var(--mincho); font-weight: 700; font-size: 15px; position: relative;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
 }
-.tabs button.on { color: var(--felt); font-weight: 900; box-shadow: inset 0 3px 0 var(--felt); }
-@media (prefers-color-scheme: dark) { .tabs button.on { color: var(--gold); box-shadow: inset 0 3px 0 var(--gold); } }
+.tabs button::before { content: ""; width: 18px; height: 3px; background: transparent; }
+.tabs button.on { color: var(--washi); font-weight: 800; }
+.tabs button.on::before { background: var(--shu); }
 .badge:not(:empty) {
-  position: absolute; top: 4px; right: calc(50% - 26px);
-  background: var(--loss); color: #fff; font-style: normal; font-size: .7rem;
-  min-width: 18px; height: 18px; border-radius: 9px; padding: 0 5px; line-height: 18px;
+  position: absolute; top: 8px; left: calc(50% + 10px); background: var(--shu); color: #fff7ee;
+  font-style: normal; font-family: var(--gothic); font-size: 11px; font-weight: 700;
+  min-width: 18px; height: 18px; line-height: 18px; border-radius: 9px; padding: 0 5px;
 }
 
-/* ---------- controls ---------- */
-.btn {
-  border: 1px solid var(--line); background: var(--surface); border-radius: 10px;
-  padding: 9px 14px; cursor: pointer; font-weight: 700;
+/* 見出し：明朝＋罫線 */
+.h {
+  margin: 0 0 6px; font-family: var(--mincho); font-weight: 800; font-size: 18px;
+  display: flex; align-items: baseline; gap: 10px;
 }
-.btn.primary { background: var(--felt); border-color: var(--felt); color: #fff; }
-.btn.danger { color: var(--loss); border-color: var(--loss); }
-.btn.small { padding: 5px 10px; font-size: .85rem; }
-.btn:disabled { opacity: .45; cursor: not-allowed; }
-input[type=text], input[type=number], input[type=password], input:not([type]), select {
-  border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px;
-  background: var(--paper); width: 100%;
-}
-input[type=number] { text-align: right; }
-.field { display: grid; gap: 4px; margin-bottom: 10px; font-size: .9rem; }
-.choice { display: flex; gap: 8px; align-items: center; padding: 6px 0; }
-.choice input { width: 20px; height: 20px; accent-color: var(--felt); }
+.h::after { content: ""; flex: 1; height: 1px; background: var(--line-strong); }
+.h.big { font-size: 22px; }
+.h.big::after { display: none; }
+.sub { margin: 0; font-size: 12px; color: var(--muted); line-height: 1.6; }
 
-/* ---------- lists ---------- */
+/* 札（カード） */
+.card {
+  background: var(--paper); border: 1.5px solid var(--ink); border-radius: 3px;
+  padding: 14px; display: flex; flex-direction: column; gap: 10px; position: relative;
+}
+.card + .card { margin-top: 14px; }
+.ribbon {
+  position: absolute; top: -11px; left: 12px; background: var(--shu); color: #fff7ee;
+  font-family: var(--mincho); font-weight: 700; font-size: 12px; padding: 2px 10px; border-radius: 2px;
+}
+.card .ribbon + * { margin-top: 6px; }
+.card-title { margin: 0; font-family: var(--mincho); font-weight: 800; font-size: 18px; }
+.lead { margin: 0; font-size: 15px; line-height: 1.6; }
+.lead b { font-family: var(--mincho); font-size: 17px; }
+
+/* 一覧 */
 .list { list-style: none; margin: 0; padding: 0; }
-.list li { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); align-items: center; }
+.list li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); }
 .list li:last-child { border-bottom: 0; }
-.amt { font-weight: 900; white-space: nowrap; }
-.plus { color: var(--gain); }
-.minus { color: var(--loss); }
-.tag { font-size: .72rem; border: 1px solid var(--line); border-radius: 6px; padding: 0 6px; color: var(--muted); margin-left: 4px; }
-.tag.host { border-color: var(--gold); color: var(--ink); background: color-mix(in srgb, var(--gold) 25%, transparent); }
-.tag.out { border-color: var(--loss); color: var(--loss); }
-.meta { font-size: .8rem; color: var(--muted); }
+.list .t { font-size: 14px; line-height: 1.5; }
+.meta { font-size: 12px; color: var(--muted); }
+.empty { margin: 0; font-size: 14px; color: var(--muted); padding: 8px 0; }
+.amt { font-family: var(--mincho); font-weight: 800; font-size: 17px; white-space: nowrap; }
+.amt.plus { color: var(--ai); }
+.amt.minus { color: var(--shu-ink); }
+.name { font-family: var(--mincho); font-weight: 700; font-size: 16px; }
+.tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 0 5px; border-radius: 2px; margin-left: 6px; vertical-align: 2px; }
+.tag.shu { background: var(--shu); color: #fff7ee; }
+.tag.sumi { background: var(--sumi); color: var(--washi); }
+.tag.line { border: 1px solid var(--line-strong); color: var(--muted); }
 
-.bank-figure { font-size: 2rem; font-weight: 900; color: var(--felt); line-height: 1.2; }
-@media (prefers-color-scheme: dark) { .bank-figure { color: var(--gold); } }
+/* 刻限（カウントダウン） */
+.timer { display: flex; align-items: center; gap: 10px; }
+.timer .bar { flex: 1; height: 4px; background: #e2d9c8; border-radius: 2px; overflow: hidden; }
+.timer .bar i { display: block; height: 100%; background: var(--shu); transition: width 1s linear; }
+.timer span { font-size: 13px; font-weight: 700; color: var(--shu-ink); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { .timer .bar i { transition: none; } }
 
-.game-row { display: grid; grid-template-columns: 1fr 110px; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--line); }
-.game-sum { text-align: right; font-weight: 700; margin-top: 8px; }
+/* 木札 */
+.fuda-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 10px; }
+.fuda { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.fuda-board {
+  width: 100%; height: 118px; background: var(--wood); border: 1px solid #8a6a43; border-radius: 4px 4px 2px 2px;
+  display: flex; justify-content: center; padding-top: 10px; position: relative; overflow: hidden;
+}
+.fuda-board span:first-child {
+  writing-mode: vertical-rl; font-family: var(--mincho); font-weight: 800; font-size: 19px; color: var(--sumi);
+  max-height: 84px; overflow: hidden; line-height: 1.15;
+}
+.fuda-board .tag { position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); margin: 0; white-space: nowrap; }
+.fuda.out .fuda-board { background: #d9d1c3; border: 1px dashed #8a7e6c; }
+.fuda.out .fuda-board span:first-child { color: #6b6259; }
+.fuda .amt { font-size: 15px; }
+.fuda .debt { font-size: 11px; color: var(--shu-ink); margin-top: -4px; }
 
-.timer { font-weight: 900; color: var(--loss); }
-.vote-box { border-top: 1px dashed var(--line); padding-top: 10px; margin-top: 8px; }
+/* 勝負の入力 */
+.bet-row { display: grid; grid-template-columns: minmax(0, 1fr) 112px; gap: 8px; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--line); }
+.bet-row:last-of-type { border-bottom: 0; }
+.check { display: flex; align-items: center; gap: 10px; font-size: 15px; min-height: 44px; }
+.check input { width: 22px; height: 22px; accent-color: var(--shu); flex: none; }
+.check.off { color: #6b6259; }
+.bet-sum { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); padding: 6px 0 4px; }
+.bet-sum b { color: var(--ai); }
+.bet-sum b.bad { color: var(--shu-ink); }
 
+/* 統一銀行 */
+.bank-head { display: flex; gap: 16px; align-items: stretch; }
+.bank-brush { writing-mode: vertical-rl; font-family: var(--brush); font-size: 34px; line-height: 1; color: var(--sumi); border-left: 2px solid var(--sumi); padding-left: 10px; }
+.bank-body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+.bank-num { font-family: var(--mincho); font-weight: 800; font-size: 46px; line-height: 1; }
+.bank-num small { font-size: 16px; font-weight: 700; margin-left: 6px; }
+.dots { display: flex; gap: 4px; }
+.dots i { width: 8px; height: 8px; border-radius: 50%; border: 1px solid var(--shu); }
+.dots i.on { background: var(--shu); }
+
+/* 番付 */
+.rank { font-family: var(--mincho); font-weight: 800; font-size: 18px; width: 2em; text-align: center; color: var(--muted); flex: none; }
+.rank.top { color: var(--shu); }
+
+/* 知らせ（トースト） */
 .toast {
-  position: fixed; left: 50%; bottom: calc(80px + env(safe-area-inset-bottom)); transform: translateX(-50%);
-  background: var(--ink); color: var(--paper); padding: 10px 16px; border-radius: 10px;
-  max-width: 90vw; font-size: .9rem; opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 20;
+  position: fixed; left: 50%; bottom: calc(76px + env(safe-area-inset-bottom)); transform: translateX(-50%);
+  width: max-content; max-width: calc(100vw - 32px); background: var(--sumi); color: var(--washi);
+  padding: 11px 16px; border-radius: 3px; font-size: 14px; line-height: 1.5;
+  opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 20;
 }
 .toast.show { opacity: 1; }
-.toast.err { background: var(--loss); color: #fff; }
+.toast.err { background: var(--shu-ink); }
 @media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
 
 </style>
 </head>
 <body>
   <section id="login" class="login" hidden>
-    <div class="login-chip"><span>¥</span></div>
-    <form id="login-form" class="login-form" autocomplete="on">
-      <label>名前<input id="l-name" name="username" maxlength="20" autocomplete="username" required></label>
-      <label>パスワード<input id="l-pass" name="password" type="password" minlength="4" autocomplete="current-password" required></label>
-      <label id="code-field" hidden>合言葉（新規登録のときだけ）<input id="l-code" autocomplete="off"></label>
-      <div class="row">
-        <button type="submit" class="btn primary">ログイン</button>
-        <button type="button" id="register-btn" class="btn">新規登録</button>
+    <div class="login-hero">
+      <h1 class="brush-title">統一</h1>
+      <div class="login-side">
+        <div class="seal" aria-hidden="true"><span>賭場</span></div>
+        <p class="kana">とういつ</p>
       </div>
-      <p class="hint">はじめての人は名前とパスワードを決めて「新規登録」。合言葉はホストに聞いてください。</p>
+    </div>
+    <form id="login-form" class="login-form" autocomplete="on">
+      <label class="field">名前<input id="l-name" name="username" maxlength="20" autocomplete="username" required></label>
+      <label class="field">パスワード<input id="l-pass" name="password" type="password" minlength="4" autocomplete="current-password" required></label>
+      <label class="field" id="code-field" hidden>入場の合言葉<input id="l-code" autocomplete="off"></label>
+      <div class="row" style="margin-top:4px">
+        <button type="submit" class="btn shu grow" style="font-size:17px;letter-spacing:.2em">入る</button>
+        <button type="button" id="register-btn" class="btn grow">はじめて</button>
+      </div>
     </form>
+    <p class="login-note">はじめての人は胴元に入場の合言葉を聞いてください</p>
   </section>
 
   <div id="app" hidden>
     <header class="top">
       <div>
         <div class="who" id="who"></div>
-        <div class="grp" id="grp-label"></div>
+        <div class="where" id="where"></div>
       </div>
-      <div class="chip" id="my-chip"><span id="my-bal">0</span><small id="my-cur"></small></div>
+      <div class="purse" id="purse">
+        <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="#a07a3c" stroke="#d2ad62" stroke-width="1.5"/><circle cx="20" cy="20" r="14.5" fill="none" stroke="#d2ad62" stroke-width="1"/><rect x="14.5" y="14.5" width="11" height="11" fill="#1c1916" stroke="#d2ad62" stroke-width="1"/></svg>
+        <div class="purse-num"><b id="my-bal">0</b><small id="my-cur"></small></div>
+      </div>
     </header>
     <main id="view"></main>
-    <nav class="tabs" id="tabs">
-      <button data-act="tab" data-tab="home">ホーム<i class="badge" id="b-home"></i></button>
-      <button data-act="tab" data-tab="group">グループ</button>
-      <button data-act="tab" data-tab="labor">労働<i class="badge" id="b-labor"></i></button>
+    <nav class="tabs" aria-label="画面の切り替え">
+      <button data-act="tab" data-tab="home">帳場<i class="badge" id="b-home"></i></button>
+      <button data-act="tab" data-tab="group">盆</button>
+      <button data-act="tab" data-tab="labor">奉公<i class="badge" id="b-labor"></i></button>
       <button data-act="tab" data-tab="bank">銀行</button>
-      <button data-act="tab" data-tab="people">みんな</button>
+      <button data-act="tab" data-tab="people">番付</button>
     </nav>
   </div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -221,26 +291,28 @@ input[type=number] { text-align: right; }
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
   <script>
 'use strict';
-
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } });
 const S = { token: localStorage.getItem('zeny_token'), st: null, tab: 'home', offset: 0, cfg: {}, lastNotice: null, channel: null };
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const cur = () => S.cfg.CURRENCY_NAME || 'ゼニー';
 const bankName = () => S.cfg.BANK_NAME || '統一銀行';
-const money = (n) => `${Number(n).toLocaleString()} ${cur()}`;
-const signed = (n) => `<span class="amt ${n > 0 ? 'plus' : n < 0 ? 'minus' : ''}">${n > 0 ? '+' : ''}${money(n)}</span>`;
-const bal = (n) => `<span class="amt ${n < 0 ? 'minus' : ''}">${money(n)}</span>`;
+const num = (n) => Number(n).toLocaleString();
+const money = (n) => `${num(n)} ${cur()}`;
+// 増減：＋は藍、－は朱。全角の符号で読みやすく
+const signed = (n) => `<span class="amt ${n > 0 ? 'plus' : n < 0 ? 'minus' : ''}">${n > 0 ? '＋' : n < 0 ? '－' : '±'}${num(Math.abs(n))}</span>`;
+const bal = (n) => `<span class="amt ${n < 0 ? 'minus' : ''}">${n < 0 ? '－' : ''}${num(Math.abs(n))}</span>`;
 const time = (t) => new Date(t).toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 const secsLeft = (deadline) => Math.max(0, Math.ceil((deadline - (Date.now() + S.offset)) / 1000));
 const intOrNull = (v) => (v === '' || v == null || !Number.isInteger(Number(v)) ? null : Number(v));
+const COIN = `<svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="#a07a3c" stroke="#d2ad62" stroke-width="1.5"/><circle cx="20" cy="20" r="14.5" fill="none" stroke="#d2ad62" stroke-width="1"/><rect x="14.5" y="14.5" width="11" height="11" fill="#1c1916" stroke="#d2ad62" stroke-width="1"/></svg>`;
 
 // ---------------- 通信 ----------------
 async function rpc(fn, args = {}, withToken = true) {
   const { data, error } = await sb.rpc(fn, withToken ? { p_token: S.token, ...args } : args);
   if (error) {
     const msg = error.message || '通信に失敗しました';
-    if (msg.startsWith('AUTH:')) { logout(); throw new Error('もう一度ログインしてください'); }
+    if (msg.startsWith('AUTH:')) { logout(); throw new Error('もう一度入ってください'); }
     throw new Error(msg);
   }
   return data;
@@ -249,7 +321,7 @@ async function act(fn, args, okMsg) {
   try {
     await rpc(fn, args);
     if (okMsg) toast(okMsg);
-    S.channel?.send({ type: 'broadcast', event: 'refresh', payload: {} }); // 他の人の画面も更新
+    S.channel?.send({ type: 'broadcast', event: 'refresh', payload: {} });
     await load();
     return true;
   } catch (e) { toast(e.message, true); return false; }
@@ -261,10 +333,10 @@ function toast(msg, err) {
   clearTimeout(toastTimer); toastTimer = setTimeout(() => (t.className = 'toast'), 4000);
 }
 
-// ---------------- ログイン ----------------
+// ---------------- 入口 ----------------
 async function doAuth(kind) {
   const name = $('#l-name').value.trim(), pass = $('#l-pass').value;
-  if (!name || !pass) return toast('名前とパスワードを入力してください', true);
+  if (!name || !pass) return toast('名前とパスワードを書いてください', true);
   try {
     S.token = kind === 'register'
       ? await rpc('register', { p_name: name, p_pass: pass, p_code: $('#l-code').value.trim() }, false)
@@ -275,7 +347,7 @@ async function doAuth(kind) {
 }
 $('#login-form').addEventListener('submit', (e) => { e.preventDefault(); doAuth('login'); });
 $('#register-btn').addEventListener('click', () => {
-  if ($('#code-field').hidden) { $('#code-field').hidden = false; $('#l-code').focus(); return toast('合言葉を入力して、もう一度「新規登録」を押してください'); }
+  if ($('#code-field').hidden) { $('#code-field').hidden = false; $('#l-code').focus(); return toast('合言葉を書いて、もう一度「はじめて」を押してください'); }
   doAuth('register');
 });
 
@@ -289,7 +361,7 @@ function startSession() {
 }
 function logout() {
   if (S.token) sb.rpc('logout', { p_token: S.token }).then(() => {});
-  localStorage.removeItem('zeny_token'); S.token = null;
+  localStorage.removeItem('zeny_token'); S.token = null; S.st = null;
   if (S.channel) { sb.removeChannel(S.channel); S.channel = null; }
   $('#app').hidden = true; $('#login').hidden = false;
 }
@@ -307,7 +379,6 @@ async function load() {
   } catch (e) { if (S.token) toast(e.message, true); }
   finally { loading = false; }
 }
-// 新しいお知らせが来たらポップアップ＋振動
 function handleNotices() {
   const list = S.st.notices;
   const newest = list[0]?.id ?? 0;
@@ -332,38 +403,52 @@ function paint(el, html) {
     if (i.type === 'checkbox' || i.type === 'radio') i.checked = v; else i.value = v;
   });
   if (focusId) document.getElementById(focusId)?.focus();
-  updateGameSum();
+  updateBetSum();
+  tickTimers();
 }
 
 // ---------------- 描画 ----------------
 function render() {
   if (!S.st) return;
   const { me, group, invites } = S.st;
-  document.title = cur();
+  document.title = '統一';
   $('#who').textContent = me.name;
-  $('#grp-label').textContent = group ? `${group.name}${group.status === 'pending' ? '（承認待ち）' : ''}` : 'グループ未参加';
-  $('#my-bal').textContent = me.balance.toLocaleString();
+  $('#where').textContent = group
+    ? (group.status === 'pending' ? `「${group.name}」顔ぶれ待ち` : `「${group.name}」に加わり中`)
+    : 'どの盆にも加わっていません';
+  $('#my-bal').textContent = (me.balance < 0 ? '－' : '') + num(Math.abs(me.balance));
   $('#my-cur').textContent = cur();
-  $('#my-chip').classList.toggle('neg', me.balance < 0);
+  $('#purse').classList.toggle('neg', me.balance < 0);
   const votesNeeded = (group?.labors || []).filter((l) => l.status === 'voting' && l.canVote && l.myVote === null).length;
   $('#b-home').textContent = invites.length + votesNeeded || '';
   $('#b-labor').textContent = votesNeeded || '';
-  document.querySelectorAll('.tabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === S.tab));
-  const views = { home: viewHome, group: viewGroup, labor: viewLabor, bank: viewBank, people: viewPeople };
+  document.querySelectorAll('.tabs button').forEach((b) => {
+    const on = b.dataset.tab === S.tab;
+    b.classList.toggle('on', on);
+    if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+  });
+  const views = { home: viewHome, group: viewBon, labor: viewLabor, bank: viewBank, people: viewBanzuke };
   paint($('#view'), views[S.tab]());
 }
 
+function payerName(l) { return l.payer === 'bank' ? esc(bankName()) : esc(l.requesterName); }
+function timerHtml(l) {
+  const total = (S.cfg.LABOR_VOTE_SECONDS || 60) * 1000;
+  return `<div class="timer" data-deadline="${l.deadline}" data-total="${total}">
+    <div class="bar"><i></i></div><span>あと <b class="left">${secsLeft(l.deadline)}</b> 秒</span></div>`;
+}
 function voteCard(l) {
-  return `<div class="vote-box">
-    <div><b>${esc(l.targetName)}</b>さんの労働：${esc(l.description)}</div>
-    <div class="meta">申請 ${esc(l.requesterName)}／支払元 ${l.payer === 'bank' ? esc(bankName()) : esc(l.requesterName)}／入力 ${l.voteCount}/${l.voterCount}人</div>
-    <div class="row" style="margin-top:6px">
-      <input id="vote-${l.id}" type="number" min="0" step="1" inputmode="numeric" class="grow" placeholder="適切な対価">
-      <button class="btn primary" data-act="vote" data-id="${l.id}">${l.myVote === null ? '入力する' : '入力し直す'}</button>
+  return `<section class="card">
+    <div class="ribbon">値付け</div>
+    <p class="lead"><b>${esc(l.targetName)}</b> の奉公「${esc(l.description)}」</p>
+    <p class="sub">申し付け ${esc(l.requesterName)}／払い ${payerName(l)}／値付け ${l.voteCount}/${l.voterCount}人${l.myVote !== null ? `／あなたの値 ${money(l.myVote)}` : ''}</p>
+    <div class="row">
+      <label class="grow"><span class="sr">対価</span>
+        <input class="input" id="vote-${l.id}" type="number" min="0" step="1" inputmode="numeric" placeholder="いくらが妥当？"></label>
+      <button class="btn shu" data-act="vote" data-id="${l.id}">${l.myVote === null ? '値をつける' : 'つけ直す'}</button>
     </div>
-    <div class="meta">残り <span class="timer" data-deadline="${l.deadline}">${secsLeft(l.deadline)}</span> 秒
-      ${l.myVote !== null ? `／あなたの入力：${money(l.myVote)}` : ''}</div>
-  </div>`;
+    ${timerHtml(l)}
+  </section>`;
 }
 
 function viewHome() {
@@ -371,117 +456,135 @@ function viewHome() {
   const voting = (group?.labors || []).filter((l) => l.status === 'voting' && l.canVote);
   let h = '';
   if (invites.length || voting.length) {
-    h += `<section class="block alert"><h2>やること</h2>`;
+    h += `<div>`;
     invites.forEach((g) => {
-      h += `<div class="vote-box"><div><b>${esc(g.hostName)}</b>さんから「${esc(g.name)}」への招待</div>
-        <div class="meta">参加中：${(g.memberNames || []).map(esc).join('、')}</div>
-        <div class="row" style="margin-top:6px">
-          <button class="btn primary" data-act="respond" data-id="${g.id}" data-accept="1">参加する</button>
-          <button class="btn" data-act="respond" data-id="${g.id}" data-accept="0">断る</button>
-        </div></div>`;
+      h += `<section class="card">
+        <div class="ribbon">誘い</div>
+        <p class="lead"><b>${esc(g.hostName)}</b> から「${esc(g.name)}」への誘い</p>
+        <p class="sub">顔ぶれ：${(g.memberNames || []).map(esc).join('、')}</p>
+        <div class="row"><button class="btn shu grow" data-act="respond" data-id="${g.id}" data-accept="1">加わる</button>
+          <button class="btn grow" data-act="respond" data-id="${g.id}" data-accept="0">断る</button></div>
+      </section>`;
     });
     voting.forEach((l) => (h += voteCard(l)));
-    h += `</section>`;
+    h += `</div>`;
   }
   if (me.balance < 0) {
-    h += `<section class="block"><p class="empty">残高がマイナスのため、ゲームに参加できません。労働で0以上に戻しましょう。</p></section>`;
+    h += `<section class="card"><div class="ribbon">出入禁止</div>
+      <p class="lead">残高が負のため、勝負に加われません。奉公で0以上に戻しましょう。</p></section>`;
   }
-  h += `<section class="block"><h2>お知らせ</h2>${notices.length
-    ? `<ul class="list">${notices.slice(0, 8).map((n) => `<li><div class="grow">${esc(n.text)}<div class="meta">${time(n.t)}</div></div></li>`).join('')}</ul>`
-    : '<p class="empty">まだお知らせはありません</p>'}</section>`;
-  h += `<section class="block"><h2>入出金の履歴</h2>`;
-  h += ledger.length ? `<ul class="list">${ledger.map((e) =>
-    `<li><div class="grow">${esc(e.note)}<div class="meta">${time(e.t)}</div></div>${signed(e.delta)}</li>`).join('')}</ul>`
-    : `<p class="empty">まだ取引はありません</p>`;
-  return h + `</section><button class="btn" data-act="logout">ログアウト</button>`;
+  h += `<section><h2 class="h">触れ書き</h2>${notices.length
+    ? `<ul class="list">${notices.slice(0, 8).map((n) => `<li><div class="t">${esc(n.text)}<div class="meta">${time(n.t)}</div></div></li>`).join('')}</ul>`
+    : '<p class="empty">まだ触れ書きはありません</p>'}</section>`;
+  h += `<section><h2 class="h">出入り</h2>${ledger.length
+    ? `<ul class="list">${ledger.map((e) => `<li><div class="t">${esc(e.note)}<div class="meta">${time(e.t)}</div></div>${signed(e.delta)}</li>`).join('')}</ul>`
+    : '<p class="empty">まだ出入りはありません</p>'}</section>`;
+  return h + `<button class="btn quiet small" data-act="logout">ログアウト</button>`;
 }
 
-function viewGroup() {
+function fudaHtml(m, hostId) {
+  const out = m.balance < 0;
+  const tag = m.id === hostId ? '<span class="tag shu">胴元</span>' : out ? '<span class="tag sumi">出入禁止</span>' : '';
+  return `<div class="fuda ${out ? 'out' : ''}">
+    <div class="fuda-board"><span>${esc(m.name)}</span>${tag}</div>
+    ${bal(m.balance)}${m.debt ? `<span class="debt">証文 ${num(m.debt)}</span>` : ''}
+  </div>`;
+}
+
+function viewBon() {
   const { me, users, group, invites } = S.st;
   const cfg = S.cfg;
   if (!group) {
     const others = users.filter((u) => u.id !== me.id);
-    return `<section class="block"><h2>グループを作る</h2>
-      <p class="sub">自分を含めて${cfg.MIN_GROUP_SIZE}人以上を選ぶと招待が届きます。${cfg.MIN_GROUP_SIZE}人が参加した時点でグループが成立し、あなたがホストになります。</p>
-      <label class="field">グループ名<input id="g-name" type="text" maxlength="30" placeholder="${esc(me.name)}のグループ"></label>
-      <div>${others.map((u) => `<label class="choice"><input type="checkbox" id="inv-${u.id}" data-user="${u.id}">
-        ${esc(u.name)} ${u.groupName ? `<span class="tag">「${esc(u.groupName)}」に参加中</span>` : ''}</label>`).join('') || '<p class="empty">まだ他の登録者がいません</p>'}</div>
-      <button class="btn primary" data-act="create-group" style="margin-top:10px">招待を送る</button>
+    return `<section class="card">
+      <h2 class="card-title">盆を開く</h2>
+      <p class="sub">自分を含めて${cfg.MIN_GROUP_SIZE}人以上を選ぶと誘いが届きます。${cfg.MIN_GROUP_SIZE}人がそろった時点で盆が立ち、あなたが胴元になります。</p>
+      <label class="field">盆の名前<input id="g-name" type="text" maxlength="30" placeholder="${esc(me.name)}の盆"></label>
+      <div>${others.map((u) => `<label class="check"><input type="checkbox" id="inv-${u.id}" data-user="${u.id}">
+        <span class="name">${esc(u.name)}</span>${u.groupName ? `<span class="tag line">「${esc(u.groupName)}」に加わり中</span>` : ''}</label>`).join('') || '<p class="empty">まだほかに登録した人がいません</p>'}</div>
+      <button class="btn shu wide" data-act="create-group">誘いを送る</button>
     </section>
-    ${invites.length ? `<p class="sub">届いている招待はホームから参加できます</p>` : ''}`;
+    ${invites.length ? `<p class="sub">届いている誘いは帳場から受けられます</p>` : ''}`;
   }
 
   const isHost = group.hostId === me.id;
-  let h = `<section class="block"><h2>${esc(group.name)}</h2>
-    <p class="sub">ホスト：${esc(group.hostName)}／${group.status === 'pending' ? `承認待ち（${group.members.length}/${cfg.MIN_GROUP_SIZE}人）` : `第${group.gameCount}ゲームまで終了`}</p>
-    <ul class="list">${group.members.map((m) => `<li><div class="grow">${esc(m.name)}
-      ${m.id === group.hostId ? '<span class="tag host">ホスト</span>' : ''}
-      ${m.balance < 0 ? '<span class="tag out">参加不可</span>' : ''}
-      ${m.debt ? `<div class="meta">返済予定 ${money(m.debt)}</div>` : ''}</div>${bal(m.balance)}</li>`).join('')}</ul>
-    ${group.pendingInvitees.length ? `<p class="meta">返事待ち：${group.pendingInvitees.map(esc).join('、')}</p>` : ''}
+  let h = `<section>
+    <div class="row" style="justify-content:space-between;align-items:baseline;margin-bottom:12px">
+      <h2 class="h big">${esc(group.name)}</h2>
+      <span class="meta">${group.status === 'pending' ? `顔ぶれ待ち（${group.members.length}/${cfg.MIN_GROUP_SIZE}人）` : `第${group.gameCount}局まで終了`}</span>
+    </div>
+    <div class="fuda-grid">${group.members.map((m) => fudaHtml(m, group.hostId)).join('')}</div>
+    ${group.pendingInvitees.length ? `<p class="sub" style="margin-top:10px">返事待ち：${group.pendingInvitees.map(esc).join('、')}</p>` : ''}
   </section>`;
 
   if (isHost && group.status === 'active') {
-    h += `<section class="block"><h2>ゲーム結果を入力</h2>
-      <p class="sub">参加者にチェックを入れ、各人の増減（終了時のチップ − 持ち込み）を入力してください。確定すると税金（${cfg.TAX_PER_PLAYER}×参加人数を残高比で徴収）と結果がすぐ反映されます。${cfg.ZERO_SUM_GAME ? '増減の合計は0にしてください。' : ''}</p>
-      ${group.members.map((m) => `<div class="game-row">
-        <label class="choice"><input type="checkbox" id="gp-${m.id}" data-player="${m.id}" ${m.balance < 0 ? 'disabled' : ''}>
-          ${esc(m.name)} ${m.balance < 0 ? '<span class="tag out">参加不可</span>' : ''}</label>
-        <input type="number" step="1" inputmode="numeric" id="gd-${m.id}" placeholder="±0" ${m.balance < 0 ? 'disabled' : ''}>
-      </div>`).join('')}
-      <div class="game-sum" id="game-sum"></div>
-      <button class="btn primary" data-act="settle" style="margin-top:8px">結果を確定</button>
+    h += `<section class="card">
+      <h2 class="card-title">第${group.gameCount + 1}局の勝負</h2>
+      <p class="sub">張った人に印をつけ、終わりのチップ − 持ち込みを書いてください。確定すると寺銭（${cfg.TAX_PER_PLAYER} × 張り手の数を残高に応じて徴収）と結果がすぐ帳面に載ります。</p>
+      <div>${group.members.map((m) => {
+        const out = m.balance < 0;
+        return `<div class="bet-row">
+          <label class="check ${out ? 'off' : ''}"><input type="checkbox" id="gp-${m.id}" data-player="${m.id}" ${out ? 'disabled' : ''}>${esc(m.name)}${out ? '（出入禁止）' : ''}</label>
+          <input class="input num" type="number" step="1" inputmode="numeric" id="gd-${m.id}" placeholder="±0" aria-label="${esc(m.name)}の増減" ${out ? 'disabled' : ''}>
+        </div>`;
+      }).join('')}</div>
+      <div class="bet-sum" id="bet-sum"></div>
+      <button class="btn shu wide" data-act="settle">勝負を確定する</button>
     </section>`;
   }
 
   if (group.games.length) {
-    h += `<section class="block"><h2>これまでのゲーム</h2>${group.games.map((g) => `
-      <h3>第${g.no}ゲーム <span class="meta">${time(g.t)}／税金 ${money(g.taxTotal)}</span></h3>
-      <ul class="list">${(g.rows || []).map((r) => `<li><span>${esc(r.name)} <span class="meta">税 ${r.tax}</span></span>${signed(r.delta)}</li>`).join('')}</ul>`).join('')}
+    h += `<section><h2 class="h">これまでの局</h2>${group.games.map((g) => `
+      <div style="margin-bottom:10px"><div class="row" style="justify-content:space-between"><span class="name">第${g.no}局</span><span class="meta">${time(g.t)}／寺銭 ${money(g.taxTotal)}</span></div>
+      <ul class="list">${(g.rows || []).map((r) => `<li><span>${esc(r.name)} <span class="meta">寺銭 ${r.tax}</span></span>${signed(r.delta)}</li>`).join('')}</ul></div>`).join('')}
     </section>`;
   }
 
   if (isHost) {
     const invitable = users.filter((u) => !group.members.some((m) => m.id === u.id));
     if (invitable.length) {
-      h += `<section class="block"><h2>メンバーを追加で招待</h2>
-        ${invitable.map((u) => `<label class="choice"><input type="checkbox" id="add-${u.id}" data-adduser="${u.id}"> ${esc(u.name)}</label>`).join('')}
-        <button class="btn" data-act="invite-more" style="margin-top:8px">招待を送る</button></section>`;
+      h += `<section><h2 class="h">追加で誘う</h2>
+        ${invitable.map((u) => `<label class="check"><input type="checkbox" id="add-${u.id}" data-adduser="${u.id}"><span class="name">${esc(u.name)}</span></label>`).join('')}
+        <button class="btn" data-act="invite-more" style="margin-top:6px">誘いを送る</button></section>`;
     }
-    h += `<section class="block"><h2>グループを解散</h2>
-      <p class="sub">残っている借金をすべて強制徴収してから、${esc(bankName())}の資金（${money(group.bank)}）を全員に均等に分配します。口座残高はそのまま引き継がれます。</p>
-      <button class="btn danger" data-act="dissolve">解散する</button></section>`;
+    h += `<section><h2 class="h">盆を閉じる</h2>
+      <p class="sub" style="margin-bottom:10px">残っている証文をすべて取り立ててから、${esc(bankName())}の金蔵（${money(group.bank)}）を全員に等分します。各自の残高はそのまま持ち越されます。</p>
+      <button class="btn danger" data-act="dissolve">盆を閉じる</button></section>`;
   } else {
-    h += `<button class="btn danger" data-act="leave">グループを抜ける</button>`;
+    h += `<button class="btn danger small" data-act="leave">盆を抜ける</button>`;
   }
   return h;
 }
 
 function viewLabor() {
   const { me, group } = S.st;
-  if (!group || group.status !== 'active') return `<section class="block"><p class="empty">労働はグループ成立後に申請できます</p></section>`;
+  if (!group || group.status !== 'active') return `<p class="empty">奉公は盆が立ってから申し付けられます</p>`;
   const others = group.members.filter((m) => m.id !== me.id);
   const voting = group.labors.filter((l) => l.status === 'voting');
   const done = group.labors.filter((l) => l.status !== 'voting');
-  const label = { approved: '承認', rejected: '棄却', unpaid: '支払不能', cancelled: '取消' };
-  let h = `<section class="block"><h2>労働を申請</h2>
-    <p class="sub">申請するとメンバー全員に通知が届き、${S.cfg.LABOR_VOTE_SECONDS}秒以内に対価を入力してもらいます。入力者が過半数を超えれば承認され、対価は入力値の中央値になります。</p>
+  const label = { approved: ['成立', 'shu'], rejected: ['不成立', 'line'], unpaid: ['払えず', 'sumi'], cancelled: ['取消', 'line'] };
+  let h = `<section class="card">
+    <h2 class="card-title">奉公を申し付ける</h2>
+    <p class="sub">申し付けると盆の全員に知らせが届き、${S.cfg.LABOR_VOTE_SECONDS}秒以内に値をつけてもらいます。値付けが過半数を超えれば成立し、対価はつけられた値の中央値になります。</p>
     <label class="field">働く人<select id="lb-target">${others.map((m) => `<option value="${m.id}">${esc(m.name)}</option>`).join('')}</select></label>
-    <label class="field">内容<input id="lb-desc" type="text" maxlength="60" placeholder="例：テーブルの片付け"></label>
-    <div class="field">支払元
-      <label class="choice"><input type="radio" name="payer" id="lb-pay-bank" value="bank" checked> ${esc(bankName())}（残高 ${money(group.bank)}）</label>
-      <label class="choice"><input type="radio" name="payer" id="lb-pay-me" value="requester"> 自分（${money(me.balance)}）</label>
+    <label class="field">奉公の内容<input id="lb-desc" type="text" maxlength="60" placeholder="例：卓の片付け"></label>
+    <div class="field">払い
+      <label class="check"><input type="radio" name="payer" id="lb-pay-bank" value="bank" checked>${esc(bankName())}（金蔵 ${money(group.bank)}）</label>
+      <label class="check"><input type="radio" name="payer" id="lb-pay-me" value="requester">自分（${money(me.balance)}）</label>
     </div>
-    <button class="btn primary" data-act="labor">申請する</button></section>`;
+    <button class="btn shu wide" data-act="labor">申し付ける</button>
+  </section>`;
   if (voting.length) {
-    h += `<section class="block alert"><h2>対価の入力受付中</h2>${voting.map((l) => l.canVote ? voteCard(l)
-      : `<div class="vote-box"><b>${esc(l.targetName)}</b>さん：${esc(l.description)}<div class="meta">あなたは入力対象外／入力 ${l.voteCount}/${l.voterCount}人／残り <span class="timer" data-deadline="${l.deadline}">${secsLeft(l.deadline)}</span> 秒</div></div>`).join('')}</section>`;
+    h += `<div>${voting.map((l) => l.canVote ? voteCard(l) : `<section class="card"><div class="ribbon">値付け中</div>
+      <p class="lead"><b>${esc(l.targetName)}</b> の奉公「${esc(l.description)}」</p>
+      <p class="sub">あなたは値をつけられません／値付け ${l.voteCount}/${l.voterCount}人</p>${timerHtml(l)}</section>`).join('')}</div>`;
   }
-  h += `<section class="block"><h2>労働の結果</h2>${done.length ? `<ul class="list">${done.map((l) => `<li><div class="grow">
-      <b>${esc(l.targetName)}</b>：${esc(l.description)} <span class="tag ${l.status === 'approved' ? 'host' : 'out'}">${label[l.status] || ''}</span>
-      <div class="meta">申請 ${esc(l.requesterName)}／支払元 ${l.payer === 'bank' ? esc(bankName()) : esc(l.requesterName)}
-      ${l.values?.length ? `／入力値 ${l.values.join('、')}` : ''}${l.reason ? `／${esc(l.reason)}` : ''}</div></div>
-      ${l.status === 'approved' ? signed(l.reward) : ''}</li>`).join('')}</ul>` : '<p class="empty">まだありません</p>'}</section>`;
+  h += `<section><h2 class="h">奉公の帳面</h2>${done.length ? `<ul class="list">${done.map((l) => {
+    const [txt, cls] = label[l.status] || ['', 'line'];
+    return `<li><div class="t"><span class="name">${esc(l.targetName)}</span>「${esc(l.description)}」<span class="tag ${cls}">${txt}</span>
+      <div class="meta">申し付け ${esc(l.requesterName)}／払い ${payerName(l)}${l.values?.length ? `／値 ${l.values.join('、')}` : ''}${l.reason ? `／${esc(l.reason)}` : ''}</div></div>
+      ${l.status === 'approved' ? signed(l.reward) : ''}</li>`;
+  }).join('')}</ul>` : '<p class="empty">まだ奉公はありません</p>'}</section>`;
   return h;
 }
 
@@ -491,50 +594,71 @@ function viewBank() {
   let h = '';
   if (group && group.status === 'active') {
     const myPrincipal = group.loans.filter((l) => l.userId === me.id).reduce((s, l) => s + l.principal, 0);
-    h += `<section class="block"><h2>${esc(bankName())}（${esc(group.name)}）</h2>
-      <div class="bank-figure">${money(group.bank)}</div>
-      <p class="sub">ゲームのたびに税金を徴収し、労働の対価の支払いや貸し付けを行います。</p>
-      <h3>借金する</h3>
-      <p class="sub">承認なしで借りられます（借りるとメンバー全員に通知されます）。${cfg.DEBT_TERM_GAMES}ゲーム後に${cfg.DEBT_INTEREST_RATE}倍の額が強制的に徴収されます（残高がマイナスになることがあります）。あと ${money(cfg.DEBT_LIMIT - myPrincipal)} まで借りられます。</p>
-      <div class="row"><input id="loan-amt" type="number" min="1" step="1" inputmode="numeric" class="grow" placeholder="金額">
-        <button class="btn primary" data-act="borrow">借りる</button></div>
-      <h3>返済待ちの借金</h3>
-      ${group.loans.length ? `<ul class="list">${group.loans.map((l) => `<li><div class="grow">${esc(l.userName)}
-        <div class="meta">借入 ${money(l.principal)}／${l.gamesLeft > 0 ? `あと${l.gamesLeft}ゲームで徴収` : '次の確定時に徴収'}</div></div>
-        <span class="amt minus">${money(l.due)}</span></li>`).join('')}</ul>` : '<p class="empty">ありません</p>'}
+    const term = cfg.DEBT_TERM_GAMES || 3;
+    h += `<section class="bank-head">
+      <div class="bank-brush" aria-hidden="true">${esc(bankName())}</div>
+      <div class="bank-body">
+        <span class="meta">金蔵の残高</span>
+        <span class="bank-num">${g0(group.bank)}<small>${esc(cur())}</small></span>
+        <p class="sub">局ごとに寺銭を集め、奉公の対価と貸し付けに使います</p>
+      </div>
+    </section>
+    <section class="card">
+      <h2 class="card-title">借りる</h2>
+      <p class="sub">誰の許しもいりません。${term}局のちに ${cfg.DEBT_INTEREST_RATE} 倍を取り立てます（残高が負になることもあります）。借りると盆の全員に知らせが届きます。</p>
+      <div class="row">
+        <label class="grow"><span class="sr">借りる額</span>
+          <input class="input" id="loan-amt" type="number" min="1" step="1" inputmode="numeric" placeholder="あと ${num(cfg.DEBT_LIMIT - myPrincipal)} まで"></label>
+        <button class="btn sumi" data-act="borrow">借りる</button>
+      </div>
+    </section>
+    <section><h2 class="h">証文</h2>
+      ${group.loans.length ? `<ul class="list">${group.loans.map((l) => {
+        const left = Math.max(0, l.gamesLeft);
+        const dots = Array.from({ length: term }, (_, i) => `<i class="${i < left ? 'on' : ''}"></i>`).join('');
+        return `<li><div><span class="name">${esc(l.userName)}</span>
+          <div class="meta">借り ${num(l.principal)}／${left > 0 ? `あと ${left}局で取り立て` : '次の局で取り立て'}</div></div>
+          <div class="row"><span class="dots" role="img" aria-label="残り${left}局">${dots}</span><span class="amt minus">${num(l.due)}</span></div></li>`;
+      }).join('')}</ul>` : '<p class="empty">証文はありません</p>'}
     </section>`;
+  } else {
+    h += `<p class="empty">盆に加わると${esc(bankName())}を使えます</p>`;
   }
-  h += `<section class="block"><h2>すべての${esc(bankName())}</h2>
-    ${banks.length ? `<ul class="list">${banks.map((b) => `<li><div class="grow">${esc(b.name)}<div class="meta">ホスト ${esc(b.hostName)}／${b.memberCount}人</div></div>${bal(b.bank)}</li>`).join('')}</ul>`
-      : '<p class="empty">稼働中のグループはありません</p>'}</section>`;
+  const otherBanks = banks.filter((b) => b.id !== group?.id);
+  if (otherBanks.length) {
+    h += `<section><h2 class="h">ほかの盆の金蔵</h2><ul class="list">${otherBanks.map((b) => `<li><div><span class="name">${esc(b.name)}</span><div class="meta">胴元 ${esc(b.hostName)}／${b.memberCount}人</div></div>${bal(b.bank)}</li>`).join('')}</ul></section>`;
+  }
   return h;
 }
+function g0(n) { return (n < 0 ? '－' : '') + num(Math.abs(n)); }
 
-function viewPeople() {
+function viewBanzuke() {
   const { users, me } = S.st;
-  return `<section class="block"><h2>みんなの残高</h2><ul class="list">${users.map((u) => `<li><div class="grow">
-    ${esc(u.name)}${u.id === me.id ? ' <span class="tag">あなた</span>' : ''}
-    ${u.groupName ? `<div class="meta">「${esc(u.groupName)}」に参加中</div>` : ''}</div>${bal(u.balance)}</li>`).join('')}</ul></section>`;
+  return `<section><h2 class="h big" style="margin-bottom:10px">番付</h2><ul class="list">${users.map((u, i) => `<li>
+    <span class="rank ${i < 3 ? 'top' : ''}">${i + 1}</span>
+    <div class="grow"><span class="name">${esc(u.name)}</span>${u.id === me.id ? '<span class="tag line">あなた</span>' : ''}${u.balance < 0 ? '<span class="tag sumi">出入禁止</span>' : ''}
+      ${u.groupName ? `<div class="meta">「${esc(u.groupName)}」に加わり中</div>` : ''}</div>${bal(u.balance)}</li>`).join('')}</ul></section>`;
 }
 
 // ---------------- 操作 ----------------
-function updateGameSum() {
-  const el = $('#game-sum'); if (!el) return;
+function updateBetSum() {
+  const el = $('#bet-sum'); if (!el) return;
   let sum = 0, n = 0;
   document.querySelectorAll('[data-player]').forEach((c) => {
     if (!c.checked) return; n++;
     sum += Number(document.getElementById('gd-' + c.dataset.player).value || 0);
   });
-  el.innerHTML = `参加 ${n}人／税金 ${money(n * S.cfg.TAX_PER_PLAYER)}／増減の合計 <span class="${sum ? 'minus' : 'plus'}">${sum > 0 ? '+' : ''}${sum}</span>`;
+  const ok = !S.cfg.ZERO_SUM_GAME || sum === 0;
+  el.innerHTML = `<span>張り手 ${n}人／寺銭 ${money(n * S.cfg.TAX_PER_PLAYER)}</span><b class="${ok ? '' : 'bad'}">合計 ${sum > 0 ? '＋' : sum < 0 ? '－' : '±'}${Math.abs(sum)}</b>`;
 }
 document.addEventListener('input', (e) => {
   if (e.target.id?.startsWith('gd-')) {
     const c = document.getElementById('gp-' + e.target.id.slice(3));
     if (c && e.target.value !== '') c.checked = true;
   }
-  updateGameSum();
+  updateBetSum();
 });
-document.addEventListener('change', updateGameSum);
+document.addEventListener('change', updateBetSum);
 
 document.addEventListener('click', async (e) => {
   const b = e.target.closest('[data-act]'); if (!b) return;
@@ -545,69 +669,72 @@ document.addEventListener('click', async (e) => {
   if (a === 'vote') {
     const v = document.getElementById('vote-' + b.dataset.id);
     const n = intOrNull(v.value);
-    if (n === null || n < 0) return toast('対価は0以上の整数で入力してください', true);
-    if (await act('vote_labor', { p_labor: Number(b.dataset.id), p_amount: n }, '対価を入力しました')) v.value = '';
+    if (n === null || n < 0) return toast('値は0以上の整数で書いてください', true);
+    if (await act('vote_labor', { p_labor: Number(b.dataset.id), p_amount: n }, '値をつけました')) v.value = '';
     return;
   }
   if (a === 'create-group') {
     const ids = [...document.querySelectorAll('[data-user]:checked')].map((c) => Number(c.dataset.user));
-    if (await act('create_group', { p_name: $('#g-name').value, p_invitees: ids }, '招待を送りました')) {
+    if (await act('create_group', { p_name: $('#g-name').value, p_invitees: ids }, '誘いを送りました')) {
       document.querySelectorAll('[data-user]').forEach((c) => (c.checked = false));
     }
     return;
   }
   if (a === 'invite-more') {
     const ids = [...document.querySelectorAll('[data-adduser]:checked')].map((c) => Number(c.dataset.adduser));
-    return act('invite_more', { p_users: ids }, '招待を送りました');
+    return act('invite_more', { p_users: ids }, '誘いを送りました');
   }
   if (a === 'settle') {
     const results = {};
     for (const c of document.querySelectorAll('[data-player]:checked')) {
       const v = document.getElementById('gd-' + c.dataset.player).value;
       const n = v === '' ? 0 : intOrNull(v);
-      if (n === null) return toast('増減は整数で入力してください', true);
+      if (n === null) return toast('増減は整数で書いてください', true);
       results[c.dataset.player] = n;
     }
-    if (!confirm('この結果で確定しますか？取り消しはできません')) return;
-    if (await act('submit_game', { p_results: results }, '結果を反映しました')) {
+    if (!confirm('この結果で勝負を確定しますか？取り消しはできません')) return;
+    if (await act('submit_game', { p_results: results }, '勝負を確定しました')) {
       document.querySelectorAll('[data-player]').forEach((c) => {
         c.checked = false; document.getElementById('gd-' + c.dataset.player).value = '';
       });
-      updateGameSum();
+      updateBetSum();
     }
     return;
   }
   if (a === 'dissolve') {
-    if (!confirm('グループを解散しますか？借金の徴収と銀行資金の分配が行われます')) return;
-    return act('dissolve_group', {}, 'グループを解散しました');
+    if (!confirm('盆を閉じますか？証文の取り立てと金蔵の分配が行われます')) return;
+    return act('dissolve_group', {}, '盆を閉じました');
   }
   if (a === 'leave') {
-    if (!confirm('グループを抜けますか？')) return;
-    return act('leave_group', {}, 'グループを抜けました');
+    if (!confirm('盆を抜けますか？')) return;
+    return act('leave_group', {}, '盆を抜けました');
   }
   if (a === 'labor') {
     const payer = $('#lb-pay-me').checked ? 'requester' : 'bank';
-    if (await act('request_labor', { p_target: Number($('#lb-target').value), p_desc: $('#lb-desc').value, p_payer: payer }, '労働を申請しました')) $('#lb-desc').value = '';
+    if (await act('request_labor', { p_target: Number($('#lb-target').value), p_desc: $('#lb-desc').value, p_payer: payer }, '奉公を申し付けました')) $('#lb-desc').value = '';
     return;
   }
   if (a === 'borrow') {
     const n = intOrNull($('#loan-amt').value);
-    if (n === null || n <= 0) return toast('金額は1以上の整数で入力してください', true);
-    if (!confirm(`${money(n)} を借りますか？メンバー全員に通知されます`)) return;
-    if (await act('borrow', { p_amount: n }, '借り入れました')) $('#loan-amt').value = '';
+    if (n === null || n <= 0) return toast('額は1以上の整数で書いてください', true);
+    if (!confirm(`${money(n)} を借りますか？盆の全員に知らせが届きます`)) return;
+    if (await act('borrow', { p_amount: n }, '借りました')) $('#loan-amt').value = '';
   }
 });
 
-// カウントダウン（0秒になったら確定結果を取りに行く）
-setInterval(() => {
+// 刻限の表示（0秒になったら結果を取りに行く）
+function tickTimers() {
   let expired = false;
-  document.querySelectorAll('[data-deadline]').forEach((el) => {
+  document.querySelectorAll('.timer[data-deadline]').forEach((el) => {
     const s = secsLeft(Number(el.dataset.deadline));
-    el.textContent = s; if (s === 0) expired = true;
+    const total = Number(el.dataset.total) || 60000;
+    el.querySelector('.left').textContent = s;
+    el.querySelector('.bar i').style.width = `${Math.min(100, (s * 1000 / total) * 100)}%`;
+    if (s === 0) expired = true;
   });
-  if (expired) setTimeout(load, 1500);
-}, 1000);
-// 画面を開いている間は15秒ごとに更新（通知の取りこぼし防止）
+  return expired;
+}
+setInterval(() => { if (tickTimers()) setTimeout(load, 1500); }, 1000);
 setInterval(() => { if (document.visibilityState === 'visible') load(); }, 15000);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') load(); });
 
