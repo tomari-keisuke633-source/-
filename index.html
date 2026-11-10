@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<script>
+  // ============================================================
+  //  ★ ここの2行だけ書き換えてください
+  //  Supabase の Project URL と anon（または publishable）キー
+  // ============================================================
+  const SUPABASE_URL = 'https://jhdaifehblcyujaswtoh.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_osDUneafEHlledFOwNAwNA_dRTZbsiV';
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17573f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ゼニー">
+<title>ゼニー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --felt: #17573f;
+  --felt-deep: #0f3d2c;
+  --paper: #eef2ef;
+  --surface: #ffffff;
+  --ink: #18231f;
+  --muted: #5d6b65;
+  --line: #d3ddd8;
+  --gold: #d4a62a;
+  --gold-ink: #3a2a00;
+  --gain: #1f7a47;
+  --loss: #b8322e;
+  --focus: #2a6fdb;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --felt: #1d6b4e;
+    --felt-deep: #0d2e22;
+    --paper: #121a17;
+    --surface: #1b2521;
+    --ink: #e7efeb;
+    --muted: #9aaba3;
+    --line: #2e3c36;
+    --gold: #e1b843;
+    --gain: #4cc583;
+    --loss: #ff7a72;
+    --focus: #7fb0ff;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; height: 100%; }
+body {
+  font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Yu Gothic", system-ui, sans-serif;
+  font-weight: 500;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
+}
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+/* ---------- login ---------- */
+.login {
+  min-height: 100%;
+  display: grid; place-content: center; gap: 28px; padding: 24px;
+  background: radial-gradient(circle at 50% 30%, var(--felt), var(--felt-deep));
+}
+.login-chip, .chip {
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, var(--gold) 0 55%, transparent 56%),
+    repeating-conic-gradient(var(--gold) 0 15deg, #fff 15deg 30deg);
+  color: var(--gold-ink);
+  display: grid; place-content: center; text-align: center;
+  font-weight: 900;
+  box-shadow: inset 0 0 0 4px var(--gold), 0 3px 0 rgba(0,0,0,.35);
+}
+.login-chip { width: 150px; height: 150px; margin: 0 auto; font-size: 1.6rem; }
+.login-form {
+  background: var(--surface); border-radius: 14px; padding: 20px;
+  width: min(340px, 90vw); display: grid; gap: 12px;
+}
+.login-form label { display: grid; gap: 4px; font-size: .9rem; color: var(--muted); }
+.hint { margin: 0; font-size: .8rem; color: var(--muted); }
+
+/* ---------- layout ---------- */
+#app { min-height: 100%; padding-bottom: calc(70px + env(safe-area-inset-bottom)); }
+.top {
+  position: sticky; top: 0; z-index: 5;
+  background: var(--felt); color: #fff;
+  padding: calc(10px + env(safe-area-inset-top)) 16px 10px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.who { font-size: 1.15rem; font-weight: 700; }
+.grp { font-size: .8rem; opacity: .8; }
+.chip { width: 76px; height: 76px; line-height: 1.1; }
+.chip span { font-size: 1.15rem; }
+.chip small { font-size: .62rem; }
+.chip.neg { filter: grayscale(.4); }
+.chip.neg span { color: var(--loss); }
+
+main { max-width: 640px; margin: 0 auto; padding: 16px; display: grid; gap: 18px; }
+h2 { font-size: 1.05rem; margin: 0 0 8px; font-weight: 900; }
+h3 { font-size: .95rem; margin: 14px 0 6px; }
+.block { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.block.alert { border: 2px solid var(--gold); }
+.sub { color: var(--muted); font-size: .85rem; margin: 0 0 8px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.grow { flex: 1; min-width: 0; }
+.empty { color: var(--muted); font-size: .9rem; margin: 0; }
+
+.tabs {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 5;
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  background: var(--surface); border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.tabs button {
+  background: none; border: 0; padding: 12px 2px; font-size: .85rem; color: var(--muted);
+  position: relative; cursor: pointer;
+}
+.tabs button.on { color: var(--felt); font-weight: 900; box-shadow: inset 0 3px 0 var(--felt); }
+@media (prefers-color-scheme: dark) { .tabs button.on { color: var(--gold); box-shadow: inset 0 3px 0 var(--gold); } }
+.badge:not(:empty) {
+  position: absolute; top: 4px; right: calc(50% - 26px);
+  background: var(--loss); color: #fff; font-style: normal; font-size: .7rem;
+  min-width: 18px; height: 18px; border-radius: 9px; padding: 0 5px; line-height: 18px;
+}
+
+/* ---------- controls ---------- */
+.btn {
+  border: 1px solid var(--line); background: var(--surface); border-radius: 10px;
+  padding: 9px 14px; cursor: pointer; font-weight: 700;
+}
+.btn.primary { background: var(--felt); border-color: var(--felt); color: #fff; }
+.btn.danger { color: var(--loss); border-color: var(--loss); }
+.btn.small { padding: 5px 10px; font-size: .85rem; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+input[type=text], input[type=number], input[type=password], input:not([type]), select {
+  border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px;
+  background: var(--paper); width: 100%;
+}
+input[type=number] { text-align: right; }
+.field { display: grid; gap: 4px; margin-bottom: 10px; font-size: .9rem; }
+.choice { display: flex; gap: 8px; align-items: center; padding: 6px 0; }
+.choice input { width: 20px; height: 20px; accent-color: var(--felt); }
+
+/* ---------- lists ---------- */
+.list { list-style: none; margin: 0; padding: 0; }
+.list li { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); align-items: center; }
+.list li:last-child { border-bottom: 0; }
+.amt { font-weight: 900; white-space: nowrap; }
+.plus { color: var(--gain); }
+.minus { color: var(--loss); }
+.tag { font-size: .72rem; border: 1px solid var(--line); border-radius: 6px; padding: 0 6px; color: var(--muted); margin-left: 4px; }
+.tag.host { border-color: var(--gold); color: var(--ink); background: color-mix(in srgb, var(--gold) 25%, transparent); }
+.tag.out { border-color: var(--loss); color: var(--loss); }
+.meta { font-size: .8rem; color: var(--muted); }
+
+.bank-figure { font-size: 2rem; font-weight: 900; color: var(--felt); line-height: 1.2; }
+@media (prefers-color-scheme: dark) { .bank-figure { color: var(--gold); } }
+
+.game-row { display: grid; grid-template-columns: 1fr 110px; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.game-sum { text-align: right; font-weight: 700; margin-top: 8px; }
+
+.timer { font-weight: 900; color: var(--loss); }
+.vote-box { border-top: 1px dashed var(--line); padding-top: 10px; margin-top: 8px; }
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(80px + env(safe-area-inset-bottom)); transform: translateX(-50%);
+  background: var(--ink); color: var(--paper); padding: 10px 16px; border-radius: 10px;
+  max-width: 90vw; font-size: .9rem; opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 20;
+}
+.toast.show { opacity: 1; }
+.toast.err { background: var(--loss); color: #fff; }
+@media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+
+</style>
+</head>
+<body>
+  <section id="login" class="login" hidden>
+    <div class="login-chip"><span>¥</span></div>
+    <form id="login-form" class="login-form" autocomplete="on">
+      <label>名前<input id="l-name" name="username" maxlength="20" autocomplete="username" required></label>
+      <label>パスワード<input id="l-pass" name="password" type="password" minlength="4" autocomplete="current-password" required></label>
+      <label id="code-field" hidden>合言葉（新規登録のときだけ）<input id="l-code" autocomplete="off"></label>
+      <div class="row">
+        <button type="submit" class="btn primary">ログイン</button>
+        <button type="button" id="register-btn" class="btn">新規登録</button>
+      </div>
+      <p class="hint">はじめての人は名前とパスワードを決めて「新規登録」。合言葉はホストに聞いてください。</p>
+    </form>
+  </section>
+
+  <div id="app" hidden>
+    <header class="top">
+      <div>
+        <div class="who" id="who"></div>
+        <div class="grp" id="grp-label"></div>
+      </div>
+      <div class="chip" id="my-chip"><span id="my-bal">0</span><small id="my-cur"></small></div>
+    </header>
+    <main id="view"></main>
+    <nav class="tabs" id="tabs">
+      <button data-act="tab" data-tab="home">ホーム<i class="badge" id="b-home"></i></button>
+      <button data-act="tab" data-tab="group">グループ</button>
+      <button data-act="tab" data-tab="labor">労働<i class="badge" id="b-labor"></i></button>
+      <button data-act="tab" data-tab="bank">銀行</button>
+      <button data-act="tab" data-tab="people">みんな</button>
+    </nav>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+  <script>
+'use strict';
+
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } });
+const S = { token: localStorage.getItem('zeny_token'), st: null, tab: 'home', offset: 0, cfg: {}, lastNotice: null, channel: null };
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const cur = () => S.cfg.CURRENCY_NAME || 'ゼニー';
+const bankName = () => S.cfg.BANK_NAME || '統一銀行';
+const money = (n) => `${Number(n).toLocaleString()} ${cur()}`;
+const signed = (n) => `<span class="amt ${n > 0 ? 'plus' : n < 0 ? 'minus' : ''}">${n > 0 ? '+' : ''}${money(n)}</span>`;
+const bal = (n) => `<span class="amt ${n < 0 ? 'minus' : ''}">${money(n)}</span>`;
+const time = (t) => new Date(t).toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+const secsLeft = (deadline) => Math.max(0, Math.ceil((deadline - (Date.now() + S.offset)) / 1000));
+const intOrNull = (v) => (v === '' || v == null || !Number.isInteger(Number(v)) ? null : Number(v));
+
+// ---------------- 通信 ----------------
+async function rpc(fn, args = {}, withToken = true) {
+  const { data, error } = await sb.rpc(fn, withToken ? { p_token: S.token, ...args } : args);
+  if (error) {
+    const msg = error.message || '通信に失敗しました';
+    if (msg.startsWith('AUTH:')) { logout(); throw new Error('もう一度ログインしてください'); }
+    throw new Error(msg);
+  }
+  return data;
+}
+async function act(fn, args, okMsg) {
+  try {
+    await rpc(fn, args);
+    if (okMsg) toast(okMsg);
+    S.channel?.send({ type: 'broadcast', event: 'refresh', payload: {} }); // 他の人の画面も更新
+    await load();
+    return true;
+  } catch (e) { toast(e.message, true); return false; }
+}
+let toastTimer;
+function toast(msg, err) {
+  const t = $('#toast');
+  t.textContent = msg; t.className = 'toast show' + (err ? ' err' : '');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => (t.className = 'toast'), 4000);
+}
+
+// ---------------- ログイン ----------------
+async function doAuth(kind) {
+  const name = $('#l-name').value.trim(), pass = $('#l-pass').value;
+  if (!name || !pass) return toast('名前とパスワードを入力してください', true);
+  try {
+    S.token = kind === 'register'
+      ? await rpc('register', { p_name: name, p_pass: pass, p_code: $('#l-code').value.trim() }, false)
+      : await rpc('login', { p_name: name, p_pass: pass }, false);
+    localStorage.setItem('zeny_token', S.token);
+    startSession();
+  } catch (e) { toast(e.message, true); }
+}
+$('#login-form').addEventListener('submit', (e) => { e.preventDefault(); doAuth('login'); });
+$('#register-btn').addEventListener('click', () => {
+  if ($('#code-field').hidden) { $('#code-field').hidden = false; $('#l-code').focus(); return toast('合言葉を入力して、もう一度「新規登録」を押してください'); }
+  doAuth('register');
+});
+
+function startSession() {
+  $('#login').hidden = true; $('#app').hidden = false;
+  S.lastNotice = null;
+  S.channel = sb.channel('zeny-sync')
+    .on('broadcast', { event: 'refresh' }, () => { clearTimeout(S.rt); S.rt = setTimeout(load, 200); })
+    .subscribe();
+  load();
+}
+function logout() {
+  if (S.token) sb.rpc('logout', { p_token: S.token }).then(() => {});
+  localStorage.removeItem('zeny_token'); S.token = null;
+  if (S.channel) { sb.removeChannel(S.channel); S.channel = null; }
+  $('#app').hidden = true; $('#login').hidden = false;
+}
+
+let loading = false;
+async function load() {
+  if (!S.token || loading) return;
+  loading = true;
+  try {
+    S.st = await rpc('get_state');
+    S.cfg = S.st.config;
+    S.offset = S.st.serverTime - Date.now();
+    handleNotices();
+    render();
+  } catch (e) { if (S.token) toast(e.message, true); }
+  finally { loading = false; }
+}
+// 新しいお知らせが来たらポップアップ＋振動
+function handleNotices() {
+  const list = S.st.notices;
+  const newest = list[0]?.id ?? 0;
+  if (S.lastNotice !== null) {
+    const fresh = list.filter((n) => n.id > S.lastNotice);
+    if (fresh.length) { toast(fresh[0].text + (fresh.length > 1 ? `（ほか${fresh.length - 1}件）` : '')); navigator.vibrate?.([150, 80, 150]); }
+  }
+  S.lastNotice = Math.max(S.lastNotice ?? 0, newest);
+}
+
+// 再描画しても入力中の値・チェック・フォーカスを保つ
+function paint(el, html) {
+  const keep = {};
+  el.querySelectorAll('input[id], select[id]').forEach((i) => {
+    keep[i.id] = i.type === 'checkbox' || i.type === 'radio' ? i.checked : i.value;
+  });
+  const focusId = document.activeElement?.id;
+  el.innerHTML = html;
+  Object.entries(keep).forEach(([id, v]) => {
+    const i = document.getElementById(id);
+    if (!i || i.disabled) return;
+    if (i.type === 'checkbox' || i.type === 'radio') i.checked = v; else i.value = v;
+  });
+  if (focusId) document.getElementById(focusId)?.focus();
+  updateGameSum();
+}
+
+// ---------------- 描画 ----------------
+function render() {
+  if (!S.st) return;
+  const { me, group, invites } = S.st;
+  document.title = cur();
+  $('#who').textContent = me.name;
+  $('#grp-label').textContent = group ? `${group.name}${group.status === 'pending' ? '（承認待ち）' : ''}` : 'グループ未参加';
+  $('#my-bal').textContent = me.balance.toLocaleString();
+  $('#my-cur').textContent = cur();
+  $('#my-chip').classList.toggle('neg', me.balance < 0);
+  const votesNeeded = (group?.labors || []).filter((l) => l.status === 'voting' && l.canVote && l.myVote === null).length;
+  $('#b-home').textContent = invites.length + votesNeeded || '';
+  $('#b-labor').textContent = votesNeeded || '';
+  document.querySelectorAll('.tabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === S.tab));
+  const views = { home: viewHome, group: viewGroup, labor: viewLabor, bank: viewBank, people: viewPeople };
+  paint($('#view'), views[S.tab]());
+}
+
+function voteCard(l) {
+  return `<div class="vote-box">
+    <div><b>${esc(l.targetName)}</b>さんの労働：${esc(l.description)}</div>
+    <div class="meta">申請 ${esc(l.requesterName)}／支払元 ${l.payer === 'bank' ? esc(bankName()) : esc(l.requesterName)}／入力 ${l.voteCount}/${l.voterCount}人</div>
+    <div class="row" style="margin-top:6px">
+      <input id="vote-${l.id}" type="number" min="0" step="1" inputmode="numeric" class="grow" placeholder="適切な対価">
+      <button class="btn primary" data-act="vote" data-id="${l.id}">${l.myVote === null ? '入力する' : '入力し直す'}</button>
+    </div>
+    <div class="meta">残り <span class="timer" data-deadline="${l.deadline}">${secsLeft(l.deadline)}</span> 秒
+      ${l.myVote !== null ? `／あなたの入力：${money(l.myVote)}` : ''}</div>
+  </div>`;
+}
+
+function viewHome() {
+  const { me, invites, group, ledger, notices } = S.st;
+  const voting = (group?.labors || []).filter((l) => l.status === 'voting' && l.canVote);
+  let h = '';
+  if (invites.length || voting.length) {
+    h += `<section class="block alert"><h2>やること</h2>`;
+    invites.forEach((g) => {
+      h += `<div class="vote-box"><div><b>${esc(g.hostName)}</b>さんから「${esc(g.name)}」への招待</div>
+        <div class="meta">参加中：${(g.memberNames || []).map(esc).join('、')}</div>
+        <div class="row" style="margin-top:6px">
+          <button class="btn primary" data-act="respond" data-id="${g.id}" data-accept="1">参加する</button>
+          <button class="btn" data-act="respond" data-id="${g.id}" data-accept="0">断る</button>
+        </div></div>`;
+    });
+    voting.forEach((l) => (h += voteCard(l)));
+    h += `</section>`;
+  }
+  if (me.balance < 0) {
+    h += `<section class="block"><p class="empty">残高がマイナスのため、ゲームに参加できません。労働で0以上に戻しましょう。</p></section>`;
+  }
+  h += `<section class="block"><h2>お知らせ</h2>${notices.length
+    ? `<ul class="list">${notices.slice(0, 8).map((n) => `<li><div class="grow">${esc(n.text)}<div class="meta">${time(n.t)}</div></div></li>`).join('')}</ul>`
+    : '<p class="empty">まだお知らせはありません</p>'}</section>`;
+  h += `<section class="block"><h2>入出金の履歴</h2>`;
+  h += ledger.length ? `<ul class="list">${ledger.map((e) =>
+    `<li><div class="grow">${esc(e.note)}<div class="meta">${time(e.t)}</div></div>${signed(e.delta)}</li>`).join('')}</ul>`
+    : `<p class="empty">まだ取引はありません</p>`;
+  return h + `</section><button class="btn" data-act="logout">ログアウト</button>`;
+}
+
+function viewGroup() {
+  const { me, users, group, invites } = S.st;
+  const cfg = S.cfg;
+  if (!group) {
+    const others = users.filter((u) => u.id !== me.id);
+    return `<section class="block"><h2>グループを作る</h2>
+      <p class="sub">自分を含めて${cfg.MIN_GROUP_SIZE}人以上を選ぶと招待が届きます。${cfg.MIN_GROUP_SIZE}人が参加した時点でグループが成立し、あなたがホストになります。</p>
+      <label class="field">グループ名<input id="g-name" type="text" maxlength="30" placeholder="${esc(me.name)}のグループ"></label>
+      <div>${others.map((u) => `<label class="choice"><input type="checkbox" id="inv-${u.id}" data-user="${u.id}">
+        ${esc(u.name)} ${u.groupName ? `<span class="tag">「${esc(u.groupName)}」に参加中</span>` : ''}</label>`).join('') || '<p class="empty">まだ他の登録者がいません</p>'}</div>
+      <button class="btn primary" data-act="create-group" style="margin-top:10px">招待を送る</button>
+    </section>
+    ${invites.length ? `<p class="sub">届いている招待はホームから参加できます</p>` : ''}`;
+  }
+
+  const isHost = group.hostId === me.id;
+  let h = `<section class="block"><h2>${esc(group.name)}</h2>
+    <p class="sub">ホスト：${esc(group.hostName)}／${group.status === 'pending' ? `承認待ち（${group.members.length}/${cfg.MIN_GROUP_SIZE}人）` : `第${group.gameCount}ゲームまで終了`}</p>
+    <ul class="list">${group.members.map((m) => `<li><div class="grow">${esc(m.name)}
+      ${m.id === group.hostId ? '<span class="tag host">ホスト</span>' : ''}
+      ${m.balance < 0 ? '<span class="tag out">参加不可</span>' : ''}
+      ${m.debt ? `<div class="meta">返済予定 ${money(m.debt)}</div>` : ''}</div>${bal(m.balance)}</li>`).join('')}</ul>
+    ${group.pendingInvitees.length ? `<p class="meta">返事待ち：${group.pendingInvitees.map(esc).join('、')}</p>` : ''}
+  </section>`;
+
+  if (isHost && group.status === 'active') {
+    h += `<section class="block"><h2>ゲーム結果を入力</h2>
+      <p class="sub">参加者にチェックを入れ、各人の増減（終了時のチップ − 持ち込み）を入力してください。確定すると税金（${cfg.TAX_PER_PLAYER}×参加人数を残高比で徴収）と結果がすぐ反映されます。${cfg.ZERO_SUM_GAME ? '増減の合計は0にしてください。' : ''}</p>
+      ${group.members.map((m) => `<div class="game-row">
+        <label class="choice"><input type="checkbox" id="gp-${m.id}" data-player="${m.id}" ${m.balance < 0 ? 'disabled' : ''}>
+          ${esc(m.name)} ${m.balance < 0 ? '<span class="tag out">参加不可</span>' : ''}</label>
+        <input type="number" step="1" inputmode="numeric" id="gd-${m.id}" placeholder="±0" ${m.balance < 0 ? 'disabled' : ''}>
+      </div>`).join('')}
+      <div class="game-sum" id="game-sum"></div>
+      <button class="btn primary" data-act="settle" style="margin-top:8px">結果を確定</button>
+    </section>`;
+  }
+
+  if (group.games.length) {
+    h += `<section class="block"><h2>これまでのゲーム</h2>${group.games.map((g) => `
+      <h3>第${g.no}ゲーム <span class="meta">${time(g.t)}／税金 ${money(g.taxTotal)}</span></h3>
+      <ul class="list">${(g.rows || []).map((r) => `<li><span>${esc(r.name)} <span class="meta">税 ${r.tax}</span></span>${signed(r.delta)}</li>`).join('')}</ul>`).join('')}
+    </section>`;
+  }
+
+  if (isHost) {
+    const invitable = users.filter((u) => !group.members.some((m) => m.id === u.id));
+    if (invitable.length) {
+      h += `<section class="block"><h2>メンバーを追加で招待</h2>
+        ${invitable.map((u) => `<label class="choice"><input type="checkbox" id="add-${u.id}" data-adduser="${u.id}"> ${esc(u.name)}</label>`).join('')}
+        <button class="btn" data-act="invite-more" style="margin-top:8px">招待を送る</button></section>`;
+    }
+    h += `<section class="block"><h2>グループを解散</h2>
+      <p class="sub">残っている借金をすべて強制徴収してから、${esc(bankName())}の資金（${money(group.bank)}）を全員に均等に分配します。口座残高はそのまま引き継がれます。</p>
+      <button class="btn danger" data-act="dissolve">解散する</button></section>`;
+  } else {
+    h += `<button class="btn danger" data-act="leave">グループを抜ける</button>`;
+  }
+  return h;
+}
+
+function viewLabor() {
+  const { me, group } = S.st;
+  if (!group || group.status !== 'active') return `<section class="block"><p class="empty">労働はグループ成立後に申請できます</p></section>`;
+  const others = group.members.filter((m) => m.id !== me.id);
+  const voting = group.labors.filter((l) => l.status === 'voting');
+  const done = group.labors.filter((l) => l.status !== 'voting');
+  const label = { approved: '承認', rejected: '棄却', unpaid: '支払不能', cancelled: '取消' };
+  let h = `<section class="block"><h2>労働を申請</h2>
+    <p class="sub">申請するとメンバー全員に通知が届き、${S.cfg.LABOR_VOTE_SECONDS}秒以内に対価を入力してもらいます。入力者が過半数を超えれば承認され、対価は入力値の中央値になります。</p>
+    <label class="field">働く人<select id="lb-target">${others.map((m) => `<option value="${m.id}">${esc(m.name)}</option>`).join('')}</select></label>
+    <label class="field">内容<input id="lb-desc" type="text" maxlength="60" placeholder="例：テーブルの片付け"></label>
+    <div class="field">支払元
+      <label class="choice"><input type="radio" name="payer" id="lb-pay-bank" value="bank" checked> ${esc(bankName())}（残高 ${money(group.bank)}）</label>
+      <label class="choice"><input type="radio" name="payer" id="lb-pay-me" value="requester"> 自分（${money(me.balance)}）</label>
+    </div>
+    <button class="btn primary" data-act="labor">申請する</button></section>`;
+  if (voting.length) {
+    h += `<section class="block alert"><h2>対価の入力受付中</h2>${voting.map((l) => l.canVote ? voteCard(l)
+      : `<div class="vote-box"><b>${esc(l.targetName)}</b>さん：${esc(l.description)}<div class="meta">あなたは入力対象外／入力 ${l.voteCount}/${l.voterCount}人／残り <span class="timer" data-deadline="${l.deadline}">${secsLeft(l.deadline)}</span> 秒</div></div>`).join('')}</section>`;
+  }
+  h += `<section class="block"><h2>労働の結果</h2>${done.length ? `<ul class="list">${done.map((l) => `<li><div class="grow">
+      <b>${esc(l.targetName)}</b>：${esc(l.description)} <span class="tag ${l.status === 'approved' ? 'host' : 'out'}">${label[l.status] || ''}</span>
+      <div class="meta">申請 ${esc(l.requesterName)}／支払元 ${l.payer === 'bank' ? esc(bankName()) : esc(l.requesterName)}
+      ${l.values?.length ? `／入力値 ${l.values.join('、')}` : ''}${l.reason ? `／${esc(l.reason)}` : ''}</div></div>
+      ${l.status === 'approved' ? signed(l.reward) : ''}</li>`).join('')}</ul>` : '<p class="empty">まだありません</p>'}</section>`;
+  return h;
+}
+
+function viewBank() {
+  const { me, group, banks } = S.st;
+  const cfg = S.cfg;
+  let h = '';
+  if (group && group.status === 'active') {
+    const myPrincipal = group.loans.filter((l) => l.userId === me.id).reduce((s, l) => s + l.principal, 0);
+    h += `<section class="block"><h2>${esc(bankName())}（${esc(group.name)}）</h2>
+      <div class="bank-figure">${money(group.bank)}</div>
+      <p class="sub">ゲームのたびに税金を徴収し、労働の対価の支払いや貸し付けを行います。</p>
+      <h3>借金する</h3>
+      <p class="sub">承認なしで借りられます（借りるとメンバー全員に通知されます）。${cfg.DEBT_TERM_GAMES}ゲーム後に${cfg.DEBT_INTEREST_RATE}倍の額が強制的に徴収されます（残高がマイナスになることがあります）。あと ${money(cfg.DEBT_LIMIT - myPrincipal)} まで借りられます。</p>
+      <div class="row"><input id="loan-amt" type="number" min="1" step="1" inputmode="numeric" class="grow" placeholder="金額">
+        <button class="btn primary" data-act="borrow">借りる</button></div>
+      <h3>返済待ちの借金</h3>
+      ${group.loans.length ? `<ul class="list">${group.loans.map((l) => `<li><div class="grow">${esc(l.userName)}
+        <div class="meta">借入 ${money(l.principal)}／${l.gamesLeft > 0 ? `あと${l.gamesLeft}ゲームで徴収` : '次の確定時に徴収'}</div></div>
+        <span class="amt minus">${money(l.due)}</span></li>`).join('')}</ul>` : '<p class="empty">ありません</p>'}
+    </section>`;
+  }
+  h += `<section class="block"><h2>すべての${esc(bankName())}</h2>
+    ${banks.length ? `<ul class="list">${banks.map((b) => `<li><div class="grow">${esc(b.name)}<div class="meta">ホスト ${esc(b.hostName)}／${b.memberCount}人</div></div>${bal(b.bank)}</li>`).join('')}</ul>`
+      : '<p class="empty">稼働中のグループはありません</p>'}</section>`;
+  return h;
+}
+
+function viewPeople() {
+  const { users, me } = S.st;
+  return `<section class="block"><h2>みんなの残高</h2><ul class="list">${users.map((u) => `<li><div class="grow">
+    ${esc(u.name)}${u.id === me.id ? ' <span class="tag">あなた</span>' : ''}
+    ${u.groupName ? `<div class="meta">「${esc(u.groupName)}」に参加中</div>` : ''}</div>${bal(u.balance)}</li>`).join('')}</ul></section>`;
+}
+
+// ---------------- 操作 ----------------
+function updateGameSum() {
+  const el = $('#game-sum'); if (!el) return;
+  let sum = 0, n = 0;
+  document.querySelectorAll('[data-player]').forEach((c) => {
+    if (!c.checked) return; n++;
+    sum += Number(document.getElementById('gd-' + c.dataset.player).value || 0);
+  });
+  el.innerHTML = `参加 ${n}人／税金 ${money(n * S.cfg.TAX_PER_PLAYER)}／増減の合計 <span class="${sum ? 'minus' : 'plus'}">${sum > 0 ? '+' : ''}${sum}</span>`;
+}
+document.addEventListener('input', (e) => {
+  if (e.target.id?.startsWith('gd-')) {
+    const c = document.getElementById('gp-' + e.target.id.slice(3));
+    if (c && e.target.value !== '') c.checked = true;
+  }
+  updateGameSum();
+});
+document.addEventListener('change', updateGameSum);
+
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const a = b.dataset.act;
+  if (a === 'tab') { S.tab = b.dataset.tab; render(); window.scrollTo(0, 0); return; }
+  if (a === 'logout') return logout();
+  if (a === 'respond') return act('respond_invite', { p_group: Number(b.dataset.id), p_accept: b.dataset.accept === '1' });
+  if (a === 'vote') {
+    const v = document.getElementById('vote-' + b.dataset.id);
+    const n = intOrNull(v.value);
+    if (n === null || n < 0) return toast('対価は0以上の整数で入力してください', true);
+    if (await act('vote_labor', { p_labor: Number(b.dataset.id), p_amount: n }, '対価を入力しました')) v.value = '';
+    return;
+  }
+  if (a === 'create-group') {
+    const ids = [...document.querySelectorAll('[data-user]:checked')].map((c) => Number(c.dataset.user));
+    if (await act('create_group', { p_name: $('#g-name').value, p_invitees: ids }, '招待を送りました')) {
+      document.querySelectorAll('[data-user]').forEach((c) => (c.checked = false));
+    }
+    return;
+  }
+  if (a === 'invite-more') {
+    const ids = [...document.querySelectorAll('[data-adduser]:checked')].map((c) => Number(c.dataset.adduser));
+    return act('invite_more', { p_users: ids }, '招待を送りました');
+  }
+  if (a === 'settle') {
+    const results = {};
+    for (const c of document.querySelectorAll('[data-player]:checked')) {
+      const v = document.getElementById('gd-' + c.dataset.player).value;
+      const n = v === '' ? 0 : intOrNull(v);
+      if (n === null) return toast('増減は整数で入力してください', true);
+      results[c.dataset.player] = n;
+    }
+    if (!confirm('この結果で確定しますか？取り消しはできません')) return;
+    if (await act('submit_game', { p_results: results }, '結果を反映しました')) {
+      document.querySelectorAll('[data-player]').forEach((c) => {
+        c.checked = false; document.getElementById('gd-' + c.dataset.player).value = '';
+      });
+      updateGameSum();
+    }
+    return;
+  }
+  if (a === 'dissolve') {
+    if (!confirm('グループを解散しますか？借金の徴収と銀行資金の分配が行われます')) return;
+    return act('dissolve_group', {}, 'グループを解散しました');
+  }
+  if (a === 'leave') {
+    if (!confirm('グループを抜けますか？')) return;
+    return act('leave_group', {}, 'グループを抜けました');
+  }
+  if (a === 'labor') {
+    const payer = $('#lb-pay-me').checked ? 'requester' : 'bank';
+    if (await act('request_labor', { p_target: Number($('#lb-target').value), p_desc: $('#lb-desc').value, p_payer: payer }, '労働を申請しました')) $('#lb-desc').value = '';
+    return;
+  }
+  if (a === 'borrow') {
+    const n = intOrNull($('#loan-amt').value);
+    if (n === null || n <= 0) return toast('金額は1以上の整数で入力してください', true);
+    if (!confirm(`${money(n)} を借りますか？メンバー全員に通知されます`)) return;
+    if (await act('borrow', { p_amount: n }, '借り入れました')) $('#loan-amt').value = '';
+  }
+});
+
+// カウントダウン（0秒になったら確定結果を取りに行く）
+setInterval(() => {
+  let expired = false;
+  document.querySelectorAll('[data-deadline]').forEach((el) => {
+    const s = secsLeft(Number(el.dataset.deadline));
+    el.textContent = s; if (s === 0) expired = true;
+  });
+  if (expired) setTimeout(load, 1500);
+}, 1000);
+// 画面を開いている間は15秒ごとに更新（通知の取りこぼし防止）
+setInterval(() => { if (document.visibilityState === 'visible') load(); }, 15000);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') load(); });
+
+// 起動
+if (SUPABASE_URL.includes('xxxxxxxx')) {
+  document.body.innerHTML = '<p style="padding:24px">index.html 冒頭（10行目あたり）の SUPABASE_URL と SUPABASE_KEY を設定してください。</p>';
+} else if (S.token) startSession();
+else $('#login').hidden = false;
+
+  </script>
+</body>
+</html>
